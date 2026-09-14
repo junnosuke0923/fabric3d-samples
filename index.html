@@ -160,8 +160,11 @@ main{padding:20px 26px 70px;}
    いちばん続いて写っている所——をちょうど隠す。暗幕の帯はもともと押すと
    閉じる場所なので、そこへ置く的は**小さく、真ん中の高さに 1 つずつ**に
    留める。残りの帯は今までどおり閉じる。
-   乗せられる画面にだけ出す（`any-hover`）——指の画面には下の
-   ［← 前］［次 →］が既にあり、二重に置く意味が無い。
+   **狭い画面では出さない。**下の［← 前］［次 →］が既にあり、二重に
+   置く意味が無いうえ、電話の幅では絵の左右を潰す。ここで
+   `any-hover` を使わないのは、上の自動送りと同じ理由——**端末の申告は
+   当てにならない**（画面の幅は測れる事実）。出たままでも押せば効くので、
+   外れたときの害は「少し窮屈」だけで済む。
    薄く出しておいて、乗せると濃くする。**まったく見えない所に的を置くと、
    在ることを知っている人しか使えない。** */
 .lbox .ledge{position:absolute;top:50%;transform:translateY(-50%);
@@ -174,7 +177,7 @@ main{padding:20px 26px 70px;}
 .lbox .ledge.next{right:16px;}
 .lbox .ledge:hover{opacity:1;background:rgba(255,255,255,.3);}
 .lbox .ledge:focus-visible{opacity:1;outline:2px solid #fff;outline-offset:2px;}
-@media (any-hover: none){.lbox .ledge{display:none;}}
+@media (max-width: 640px){.lbox .ledge{display:none;}}
 .lbox .lcap{color:#fff;cursor:default;text-align:center;max-width:80ch;
   font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.6;}
 .lbox .lnav{display:flex;gap:8px;align-items:center;cursor:default;}
@@ -297,21 +300,21 @@ ROWS.forEach(function(r){
 });
 var NOTES = {};
 var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-/* **乗せると勝手に送る仕掛けは、乗せられる画面にだけ付ける。** 指の画面でも
-   付けておくと、札を軽く触った瞬間に `focus` が来て自動送りが始まり、
-   せっかく指で送った先が 1 枚目へ引き戻される。
+/* **端末に「あなたは乗せられますか」と聞かない。**
+   ここには一度、聞く門（`hover: hover` → `any-hover: hover`）が立っていた。
+   どちらも同じ形で外した——`hover` は*主たる*入力ひとつしか見ないので
+   タッチ対応の PC で偽になり、`any-hover` へ広げてもなお、利用者の PC では
+   乗せる仕掛けが付かないままだった（user-reported / 2026-09-14、同じ日に
+   2 度）。**質問そのものが当てにならない**ので、聞くのをやめる。
 
-   **その「乗せられるか」は `any-hover` で見る。** `hover: hover` は*主たる*
-   入力ひとつだけを見るので、**画面に触れる PC**——タッチ対応のノート——では
-   マウスを繋いでいても偽になり、乗せる仕掛けが丸ごと付かない
-   （user-reported / 2026-09-14。この門を入れた当日に出た）。`any-hover` は
-   「どれか一つでも乗せられる入力があるか」なので、電話では偽・タッチ対応の
-   PC では真になる——**カーソルが見えている画面は、必ず真。** */
-var CAN_HOVER = !window.matchMedia || window.matchMedia("(any-hover: hover)").matches;
-/* **指で触った直後は、乗せた扱いにしない。** タッチ対応の PC では上の門が
-   真になるので、これが無いと払った先が 1 枚目へ引き戻される（門を広げた
-   ぶんの手当て）。指は互換のマウスイベントも起こすので、`mouseenter` の
-   側にも同じ門が要る。 */
+   聞いていた理由は「指の画面で札を軽く触ると `focus` が来て自動送りが
+   始まり、せっかく指で送った先が 1 枚目へ引き戻される」ことだけで、
+   それは下の `touched_just_now()` が既に押さえている——**端末の申告では
+   なく、直前に指が触ったかという事実で見る。**こちらは電話でも
+   タッチ対応の PC でも同じに効く。乗せる入力を持たない画面には
+   そもそも `mouseenter` が来ないので、外して困ることは無い。 */
+/* **指で触った直後は、乗せた扱いにしない。** 指は互換のマウスイベントも
+   起こすので、`focus` だけでなく `mouseenter` の側にも同じ門が要る。 */
 var LAST_TOUCH = 0;
 document.addEventListener("touchstart", function(){ LAST_TOUCH = Date.now(); },
                           {passive: true, capture: true});
@@ -398,7 +401,7 @@ function makeCard(r){
     if (b._noclick){ b._noclick = false; return; }
     goTo(r.num);
   });
-  if (!REDUCED && CAN_HOVER && shown.length > 1){
+  if (!REDUCED && shown.length > 1){
     b.addEventListener("mouseenter", function(){ if (!touched_just_now()) play(b); });
     b.addEventListener("focus", function(){ if (!touched_just_now()) play(b); });
     b.addEventListener("mouseleave", function(){ stop(b); });
