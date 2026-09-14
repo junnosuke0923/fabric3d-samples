@@ -149,8 +149,13 @@ main{padding:20px 26px 70px;}
    絵をくっきり見せる」場所、こちらは「1枚を大きく見る」場所。
    影は付けない。箱は画面いっぱいで、絵はその中に収まっているので、
    箱の縁に影を描くと絵と関係の無い所に線が出る。 */
+/* **絵そのものの上だけ `zoom-in`。** 帯の上は暗幕と同じ `zoom-out` に
+   しておく——押すと閉じる場所と、押すと拡大する場所が、指す前に見分く。
+   どちらの形になるかは JS が `_lb_cursor` で点ごとに決める。 */
 .lbox img{flex:1 1 auto;min-height:0;width:100%;height:100%;object-fit:contain;
-  cursor:default;}
+  cursor:zoom-out;transition:transform .18s ease;transform-origin:center center;}
+.lbox img.lzoom{cursor:grab;transition:none;}
+.lbox img.lgrab{cursor:grabbing;}
 .lbox .lcap{color:#fff;cursor:default;text-align:center;max-width:80ch;
   font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.6;}
 .lbox .lnav{display:flex;gap:8px;align-items:center;cursor:default;}
@@ -738,6 +743,53 @@ function _lb_on_picture(img, x, y){
   return x >= x0 && x <= x0 + w && y >= y0 && y <= y0 + h;
 }
 
+/* ---------- もう一段の拡大（押した点を動かさない） ---------- */
+/* **段は 1 つだけにする。**「いま何倍か」を画面で言わずに済むのは、
+   状態が 2 つしか無いあいだだけ。倍率は**元の画素まで**（2〜4 倍に収める）
+   ——それ以上に伸ばしても、無い細部は出てこない。 */
+var lbZ = 1, lbTx = 0, lbTy = 0, lbDrag = null;
+function _lb_box(img){
+  /* `object-fit:contain` が実際に絵を描いている矩形（拡大を掛ける前）。 */
+  var r = img.getBoundingClientRect();
+  var nw = img.naturalWidth || 0, nh = img.naturalHeight || 0;
+  if (!nw || !nh || !r.width || !r.height) return null;
+  var s = Math.min(r.width / nw, r.height / nh);
+  return {r: r, w: nw * s, h: nh * s, nw: nw, s: s};
+}
+function _lb_apply(){
+  var img = lbox && lbox._img;
+  if (!img) return;
+  var b = _lb_box(img);
+  if (b && lbZ > 1){
+    /* **画面の中に絵の縁が入り込まないところまでで止める。** 引きずって
+       絵を画面外へ捨ててしまえると、戻し方が分からなくなる。 */
+    var mx = Math.max(0, (b.w * lbZ - b.r.width) / 2);
+    var my = Math.max(0, (b.h * lbZ - b.r.height) / 2);
+    lbTx = Math.max(-mx, Math.min(mx, lbTx));
+    lbTy = Math.max(-my, Math.min(my, lbTy));
+  } else { lbTx = lbTy = 0; }
+  img.style.transform = "translate(" + lbTx + "px," + lbTy + "px) scale(" + lbZ + ")";
+  img.classList.toggle("lzoom", lbZ > 1);
+  /* **その場で書いた cursor は、必ず消してから class へ渡す。** 直に書いた
+     値は class より強いので、残すと拡大しても `zoom-in` のままになる。 */
+  img.style.cursor = "";
+  if (lbZ <= 1) img.classList.remove("lgrab");
+}
+function _lb_fit(){ lbZ = 1; lbTx = lbTy = 0; _lb_apply(); }
+function _lb_zoom_at(x, y){
+  var img = lbox._img, b = _lb_box(img);
+  if (!b) return;
+  var z = Math.min(4, Math.max(2, b.nw / b.w));
+  /* 押した点が動かないための移動量。中心まわりに z 倍するので
+     final(p) = c + (p - c) z + t、final(押した点) = 押した点 より
+     t = (1 - z)(押した点 - 中心)。 */
+  var cx = b.r.left + b.r.width / 2, cy = b.r.top + b.r.height / 2;
+  lbZ = z;
+  lbTx = (1 - z) * (x - cx);
+  lbTy = (1 - z) * (y - cy);
+  _lb_apply();
+}
+
 function zoom(list, at, back){
   if (!list || !list.length || at < 0) return;
   lbList = list;
@@ -757,11 +809,55 @@ function zoom(list, at, back){
        `e.target === lbox` では閉じられなかった（user-reported）。
        だから帯の上の押下も閉じる扱いにする。送りと説明は押しても閉じない
        ——あちらは押すためにそこにある。 */
+    /* **押した場所で行き先が3つに分かれる。**
+       ・絵の外（暗幕・帯）……閉じる
+       ・絵の上で等倍のとき……その点を軸にもう一段拡大する
+       ・拡大しているとき……どこを押しても等倍へ戻る（閉じない）
+       拡大中に閉じないのは、**倍率を上げるほど「絵の外」が狭くなる**から
+       ——狭くなっていく的を狙わせるより、一度戻してから閉じるほうが速い。
+       閉じる道は［閉じる］と Esc にいつでもある。 */
     lbox.addEventListener("click", function(e){
       if (e.target === lbox){ unzoom(); return; }
-      if (e.target === lbox._img && !_lb_on_picture(lbox._img, e.clientX, e.clientY)) unzoom();
+      if (e.target !== lbox._img) return;
+      if (lbDrag && lbDrag.moved){ lbDrag = null; return; }
+      if (lbZ > 1){ _lb_fit(); return; }
+      if (_lb_on_picture(lbox._img, e.clientX, e.clientY)) _lb_zoom_at(e.clientX, e.clientY);
+      else unzoom();
     });
     var img = document.createElement("img");
+    /* 拡大しているあいだは引きずって動かせる。6px 動いたら、その後ろに
+       来る click は捨てる——捨てないと、動かし終えた指を離した所で
+       等倍へ戻ってしまう。 */
+    img.addEventListener("pointerdown", function(e){
+      if (lbZ <= 1) return;
+      lbDrag = {x: e.clientX, y: e.clientY, tx: lbTx, ty: lbTy, moved: false, id: e.pointerId};
+      img.classList.add("lgrab");
+      try { img.setPointerCapture(e.pointerId); } catch (err) {}
+      e.preventDefault();
+    });
+    img.addEventListener("pointermove", function(e){
+      if (!lbDrag || e.pointerId !== lbDrag.id) return;
+      var dx = e.clientX - lbDrag.x, dy = e.clientY - lbDrag.y;
+      if (!lbDrag.moved && Math.abs(dx) + Math.abs(dy) < 6) return;
+      lbDrag.moved = true;
+      lbTx = lbDrag.tx + dx;
+      lbTy = lbDrag.ty + dy;
+      _lb_apply();
+    });
+    function enddrag(e){
+      if (!lbDrag || e.pointerId !== lbDrag.id) return;
+      img.classList.remove("lgrab");
+      try { img.releasePointerCapture(e.pointerId); } catch (err) {}
+      /* 動かしていなければ、この直後の click に拡大／等倍を任せる。 */
+      if (!lbDrag.moved) lbDrag = null;
+    }
+    img.addEventListener("pointerup", enddrag);
+    img.addEventListener("pointercancel", enddrag);
+    /* 等倍のときだけ、絵の上で `zoom-in` にする。帯の上は暗幕と同じ形。 */
+    img.addEventListener("pointermove", function(e){
+      if (lbZ > 1 || e.pointerType === "touch") return;
+      img.style.cursor = _lb_on_picture(img, e.clientX, e.clientY) ? "zoom-in" : "zoom-out";
+    });
     var cap = document.createElement("div");
     cap.className = "lcap";
     var nav = document.createElement("div");
@@ -788,6 +884,10 @@ function zoom(list, at, back){
 }
 function lpaint(){
   var im = lbList[lbAt], many = lbList.length > 1;
+  /* **絵を替えたら等倍へ戻す。** 前の絵の拡大率と移動量を持ち越すと、
+     次の絵は縦横比も画素数も違うので、開いた瞬間に見当違いの所が写る。 */
+  lbDrag = null;
+  _lb_fit();
   lbox._img.src = im.d;
   lbox._img.alt = im.c;
   lbox._cap.textContent = im.c;
@@ -804,6 +904,8 @@ function lstep(g){
 }
 function unzoom(){
   if (!lbList) return;
+  lbDrag = null;
+  if (lbox) _lb_fit();
   if (lbox && lbox.parentNode) lbox.parentNode.removeChild(lbox);
   lbList = null;
   if (lbBack && lbBack.focus && lbBack.isConnected) lbBack.focus();
