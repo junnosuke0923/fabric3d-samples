@@ -724,6 +724,20 @@ function close(){
    できて、読み込みの間だけ画面が白く抜ける。 */
 var lbox = null, lbList = null, lbAt = 0, lbBack = null;
 
+/* `object-fit:contain` が実際に絵を描いている矩形を出し、点がその中かを返す。
+   **まだ大きさが分からないうちは「絵の上」と答える**——分からないことを
+   理由に閉じると、読み込みの一瞬に押した人の絵が消える。閉じないほうの
+   外し方は、もう一度押せば済む。 */
+function _lb_on_picture(img, x, y){
+  var r = img.getBoundingClientRect();
+  var nw = img.naturalWidth || 0, nh = img.naturalHeight || 0;
+  if (!nw || !nh || !r.width || !r.height) return true;
+  var s = Math.min(r.width / nw, r.height / nh);
+  var w = nw * s, h = nh * s;
+  var x0 = r.left + (r.width - w) / 2, y0 = r.top + (r.height - h) / 2;
+  return x >= x0 && x <= x0 + w && y >= y0 && y <= y0 + h;
+}
+
 function zoom(list, at, back){
   if (!list || !list.length || at < 0) return;
   lbList = list;
@@ -735,8 +749,18 @@ function zoom(list, at, back){
     lbox.setAttribute("role", "dialog");
     lbox.setAttribute("aria-modal", "true");
     lbox.setAttribute("aria-label", "絵を大きく表示");
-    /* 暗幕そのものを押したときだけ閉じる。絵や送りを押して閉じない。 */
-    lbox.addEventListener("click", function(e){ if (e.target === lbox) unzoom(); });
+    /* **絵の当たり判定は、要素ではなく「描かれている矩形」で見る。**
+       `img` は `width/height:100%` + `object-fit:contain` なので、
+       **要素は画面いっぱいを占めたまま、絵はその中で letterbox される**
+       ——横長の絵なら上下、縦長なら左右に暗い帯ができる。そこを押すと
+       利用者には「絵の外」に見えるのに、当たっているのは `img` なので
+       `e.target === lbox` では閉じられなかった（user-reported）。
+       だから帯の上の押下も閉じる扱いにする。送りと説明は押しても閉じない
+       ——あちらは押すためにそこにある。 */
+    lbox.addEventListener("click", function(e){
+      if (e.target === lbox){ unzoom(); return; }
+      if (e.target === lbox._img && !_lb_on_picture(lbox._img, e.clientX, e.clientY)) unzoom();
+    });
     var img = document.createElement("img");
     var cap = document.createElement("div");
     cap.className = "lcap";
