@@ -113,6 +113,12 @@ main{padding:20px 26px 70px;}
 /* 控えられない画面（私用の窓・端末の設定）では、印そのものを出さない。
    押せるのに消えるより、無いほうがよい。 */
 body.nofav .cfav,body.nofav #fmode button[data-v="star"]{display:none;}
+/* 指の画面では押す場所を広げる。**負の margin で打ち消す**ので、
+   行の高さは変わらない——広げたぶんだけ札が伸びると、24 件だけ背の
+   高い札が混ざることになる。 */
+@media (hover:none){
+  .cfav{padding:11px 6px 11px 8px;margin:-7px -5px -7px 0;}
+}
 .card h3{margin:0;font-family:"Shippori Mincho",serif;font-weight:600;font-size:15.5px;
          line-height:1.5;text-wrap:balance;}
 .cmemo{font-size:11.5px;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:6px;margin:0;
