@@ -90,7 +90,12 @@ main{padding:20px 26px 70px;}
      box-shadow:0 0 0 1px rgba(0,0,0,.4);}
 }
 .cbody{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px;flex:1;}
-.crow{display:flex;align-items:center;gap:8px;}
+/* **札の番号の行には、モードのチップが 2 枚入ることがある**（柱と面の
+   同居 / 24 件）。細い列では 1 枚ぶんの想定で組んだ隙間だと、お気に入りの
+   印が縁からはみ出す（実測 2px）。隙間を詰め、足りなければチップの側が
+   縮む——印は押す場所なので、こちらを削ってはいけない。 */
+.crow{display:flex;align-items:center;gap:6px;min-width:0;}
+.crow .chip{min-width:0;overflow:hidden;text-overflow:ellipsis;}
 .cnum{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:20px;line-height:1;
       color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums;}
 .cstar{margin-left:auto;color:var(--star);font-size:12px;letter-spacing:.04em;}
@@ -99,7 +104,7 @@ main{padding:20px 26px 70px;}
    span のまま押せる場所にして、札の click を横取りする。指でも外さない
    よう、見えている字より広く取る。 */
 .cfav{margin-left:auto;color:var(--star);font-size:12px;letter-spacing:.04em;
-      display:inline-flex;align-items:center;gap:3px;padding:4px 2px 4px 8px;margin-right:-2px;
+      display:inline-flex;align-items:center;gap:3px;padding:4px 1px 4px 5px;flex:0 0 auto;
       border-radius:6px;line-height:1;cursor:pointer;}
 .cfav .mark{font-size:17px;line-height:1;}
 .cfav.off .mark{color:var(--ink-2);opacity:.55;}
