@@ -94,6 +94,20 @@ main{padding:20px 26px 70px;}
 .cnum{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:20px;line-height:1;
       color:var(--accent);font-weight:500;font-variant-numeric:tabular-nums;}
 .cstar{margin-left:auto;color:var(--star);font-size:12px;letter-spacing:.04em;}
+/* お気に入りの印。**札そのものが button なので、中に button は置けない**
+   （入れ子の button は HTML として無効で、ブラウザが黙って外す）。
+   span のまま押せる場所にして、札の click を横取りする。指でも外さない
+   よう、見えている字より広く取る。 */
+.cfav{margin-left:auto;color:var(--star);font-size:12px;letter-spacing:.04em;
+      display:inline-flex;align-items:center;gap:3px;padding:4px 2px 4px 8px;margin-right:-2px;
+      border-radius:6px;line-height:1;cursor:pointer;}
+.cfav .mark{font-size:17px;line-height:1;}
+.cfav.off .mark{color:var(--ink-2);opacity:.55;}
+.cfav:hover{background:color-mix(in srgb, var(--star) 16%, transparent);}
+.cfav:hover.off .mark{opacity:1;color:var(--star);}
+/* 控えられない画面（私用の窓・端末の設定）では、印そのものを出さない。
+   押せるのに消えるより、無いほうがよい。 */
+body.nofav .cfav,body.nofav #fmode button[data-v="star"]{display:none;}
 .card h3{margin:0;font-family:"Shippori Mincho",serif;font-weight:600;font-size:15.5px;
          line-height:1.5;text-wrap:balance;}
 .cmemo{font-size:11.5px;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:6px;margin:0;
@@ -265,7 +279,7 @@ strong{font-weight:600;}
       <button data-v="all" aria-pressed="true">すべて</button>
       <button data-v="BRISTLE" aria-pressed="false">柱</button>
       <button data-v="SURFACE" aria-pressed="false">面</button>
-      
+      <button data-v="star" aria-pressed="false" title="お気に入りだけ">★ お気に入り</button>
     </div>
     <div class="seg" id="fsort">
       <button data-v="desc" aria-pressed="true">新しい順</button>
@@ -390,8 +404,20 @@ function makeCard(r){
   var n = document.createElement("span");
   n.className = "cnum";
   n.textContent = r.num;
+  /* **お気に入りは、一覧から 1 押しで付ける。** 詳細を開かないと付けられ
+     ないと、気になった物を控えていく作業が「開く→戻る」の往復になる
+     （利用者の求め / 2026-09-14）。中の ★ は詳細の 1〜5 をそのまま映すが、
+     ここで押したときは 入／切 の 2 つしか動かさない。 */
   var st = document.createElement("span");
-  st.className = "cstar";
+  st.className = "cfav off";
+  st.title = "お気に入り";
+  var mk = document.createElement("span");
+  mk.className = "mark";
+  mk.textContent = "☆";
+  var ex = document.createElement("span");
+  ex.className = "ex";
+  st.appendChild(mk);
+  st.appendChild(ex);
   row.appendChild(n);
   modes_of(r).forEach(function(m){ row.appendChild(mode_chip(m)); });
   row.appendChild(st);
@@ -408,14 +434,17 @@ function makeCard(r){
   b._shot = shot;
   b._cap = cap;
   b._star = st;
+  b._mark = mk;
+  b._ex = ex;
   b._memo = mm;
   b._imgs = shown;
   b._at = 0;
-  b.addEventListener("click", function(){
+  b.addEventListener("click", function(e){
     /* **指で送った直後の click では開かない。** 札そのものが button
        なので、払う動きの終わりにも click が出る。ここで返さないと、
        次の絵を見ようとするたびに詳細が開く。 */
     if (b._noclick){ b._noclick = false; return; }
+    if (e.target.closest(".cfav")){ toggleFav(r.num); return; }
     goTo(r.num);
   });
   /* **「動き控えめ」は、絵を送るなという意味ではない。**
@@ -549,6 +578,12 @@ function draw(){
     paintNote(r.num);
   });
   empty.hidden = rows.length > 0;
+  /* **空の理由が違えば、次にやることも違う。**お気に入りが 1 件も無い
+     のと、探した言葉が見つからないのを同じ字で言うと、印の付け方が
+     どこにも書かれていないことになる。 */
+  empty.textContent = (!rows.length && state.mode === "star" && !state.q)
+    ? "お気に入りはまだありません。札の番号の行の右端にある ☆ を押すと入ります。"
+    : "見つかりませんでした。";
   document.getElementById("count").textContent =
     rows.length === ROWS.length ? ROWS.length + " 件"
                                 : rows.length + " / " + ROWS.length + " 件";
@@ -557,11 +592,21 @@ function paintNote(num){
   var b = cards[num];
   if (!b) return;
   var n = NOTES[num] || {};
-  var s = "";
-  for (var i = 0; i < (n.star || 0); i++) s += "★";
-  b._star.textContent = s;
+  var v = n.star || 0;
+  b._star.classList.toggle("off", !v);
+  b._mark.textContent = v ? "★" : "☆";
+  /* 2 つ目以降の ★ は、詳細で付けた段数を映すだけの控え。1 押しで付け
+     たものは 1 つなので、ふだんはここに何も出ない。 */
+  b._ex.textContent = v > 1 ? Array(v).join("★") : "";
+  b._star.title = v ? "お気に入りから外す" : "お気に入りに入れる";
   b._memo.textContent = n.memo || "";
   b._memo.hidden = !n.memo;
+}
+/* 一覧の ☆ は 入／切 だけ。段数を上げ下げするのは詳細の 5 つ星の役で、
+   ここで段数まで動かすと、押すたびに意味の違う動きになる。 */
+function toggleFav(num){
+  if (!store) return;
+  save(num, {star: ((NOTES[num] || {}).star || 0) > 0 ? 0 : 1});
 }
 
 document.getElementById("fmode").addEventListener("click", function(e){
@@ -744,6 +789,7 @@ function open(num){
     p.textContent = "この作例の説明文（README）はまだありません。設定と画像は " + r.path + " にあります。";
     text.appendChild(p);
   }
+  text.appendChild(noteBox(r.num));
   sheet.appendChild(figs);
   sheet.appendChild(text);
   detail.appendChild(sheet);
@@ -998,11 +1044,44 @@ document.addEventListener("keydown", function(e){
   }
 });
 
-/* ---------- メモ（保存できるときだけ書ける） ---------- */
-var db = null, noteEls = null, dbMsg = null;  /* dbMsg: null=まだ待っている */
+/* ---------- お気に入りとメモ ----------
+   **控えの置き場は 2 つあり、意味が違う。**アーティファクトとして開いた
+   ときは `window.claude` の db で、同じページを開いた人どうしで共有される。
+   GitHub Pages で開いたときは **その PC の中だけ**（`localStorage`）。
+   利用者の求めは後者で、「PC ごとに、閲覧者が気になったものを控えて
+   おいて、次に来たときお気に入りだけを表示する」（2026-09-14）。
+
+   **共有の db があるときは、そちらを採る。**同じ画面の中に控えが 2 つ
+   あると、どちらに付けたか分からなくなる——`localStorage` は db が
+   使えないときの受け皿で、併用する物ではない。
+
+   `localStorage` は読めないことがある（私用の窓・端末の設定・埋め込み）
+   ので読み書きの両方を try で包み、読めなければ `store` を持たないまま
+   ——つまり「控えられません」と言って、印そのものを押せなくする。
+   押せるのに消えるより、押せないほうがよい。 */
+var NOTE_KEY = "bf.cards.notes";
+var store = null, noteEls = null, dbMsg = null;  /* dbMsg: null=まだ待っている */
+function localStore(){
+  var all = null;
+  try {
+    all = JSON.parse(localStorage.getItem(NOTE_KEY) || "{}");
+    localStorage.setItem(NOTE_KEY, JSON.stringify(all || {}));
+  } catch (e) { return null; }
+  if (!all || typeof all !== "object") all = {};
+  return {
+    where: "この PC の中だけに控えています（ほかの人には見えません）",
+    all: function(){ return all; },
+    set: function(num, val){
+      all[String(num)] = val;
+      try { localStorage.setItem(NOTE_KEY, JSON.stringify(all)); }
+      catch (e) { return Promise.reject(e); }
+      return Promise.resolve();
+    }
+  };
+}
 function noteBox(num){
   var box = document.createElement("div");
-  box.className = "note" + (db ? "" : " off");
+  box.className = "note" + (store ? "" : " off");
   var h = document.createElement("h4");
   h.textContent = "メモ";
   var stars = document.createElement("div");
@@ -1019,7 +1098,7 @@ function noteBox(num){
   ta.placeholder = "気づいたこと、直したい所";
   var st = document.createElement("div");
   st.className = "state";
-  st.textContent = db ? "" : (dbMsg === null ? "読み込み中…" : dbMsg);
+  st.textContent = dbMsg === null ? "読み込み中…" : dbMsg;
   box.appendChild(h);
   box.appendChild(stars);
   box.appendChild(ta);
@@ -1029,14 +1108,14 @@ function noteBox(num){
 
   stars.addEventListener("click", function(e){
     var t = e.target.closest("button");
-    if (!t || !db) return;
+    if (!t || !store) return;
     var cur = (NOTES[num] || {}).star || 0;
     var v = Number(t.dataset.v);
     save(num, {star: v === cur ? 0 : v});
   });
   var tt = null;
   ta.addEventListener("input", function(){
-    if (!db) return;
+    if (!store) return;
     var v = ta.value;
     st.textContent = "…";
     clearTimeout(tt);
@@ -1062,7 +1141,10 @@ function save(num, patch){
   NOTES[num] = next;
   paintBox();
   paintNote(num);
-  db.doc("notes/" + num).set(next).then(function(){
+  /* **★ の絞り込みで見ている最中なら、その場で並べ直す。**外したのに
+     札が残っていると、押せていないように見える。 */
+  if (state.mode === "star") draw();
+  store.set(num, next).then(function(){
     if (noteEls && noteEls.num === num) noteEls.st.textContent = "保存しました";
   }).catch(function(err){
     if (noteEls && noteEls.num === num)
@@ -1071,8 +1153,9 @@ function save(num, patch){
 }
 function noteReady(msg){
   dbMsg = msg;
+  document.body.classList.toggle("nofav", !store);
   if (!noteEls) return;
-  noteEls.box.classList.toggle("off", !db);
+  noteEls.box.classList.toggle("off", !store);
   noteEls.st.textContent = msg;
   paintBox();
 }
@@ -1083,25 +1166,42 @@ draw();
 depth = (history.state && history.state.d) || 0;
 applyHash();
 
+function useLocal(){
+  store = localStore();
+  if (!store){
+    noteReady("この画面ではお気に入りとメモを控えられません。");
+    return;
+  }
+  NOTES = store.all();
+  noteReady(store.where);
+  Object.keys(cards).forEach(paintNote);
+  if (state.mode === "star") draw();
+}
+function useShared(x){
+  store = {
+    where: "このページを開いた人どうしで共有しています",
+    all: function(){ return NOTES; },
+    set: function(num, val){ return x.doc("notes/" + num).set(val); }
+  };
+  noteReady(store.where);
+  x.collection("notes").onSnapshot(function(docs){
+    NOTES = {};
+    (docs || []).forEach(function(d){
+      var v = (d && typeof d.data === "function") ? d.data() : d;
+      var id = (d && d.id) || (v && v.num);
+      if (id) NOTES[String(id)] = v;
+    });
+    Object.keys(cards).forEach(paintNote);
+    paintBox();
+    if (state.mode === "star") draw();
+  }, function(){});
+}
 if (window.claude && window.claude.use){
   window.claude.use("db").then(function(x){
-    if (!x){ noteReady("この画面ではメモを保存できません。"); return; }
-    db = x;
-    noteReady("");
-    db.collection("notes").onSnapshot(function(docs){
-      NOTES = {};
-      (docs || []).forEach(function(d){
-        var v = (d && typeof d.data === "function") ? d.data() : d;
-        var id = (d && d.id) || (v && v.num);
-        if (id) NOTES[String(id)] = v;
-      });
-      Object.keys(cards).forEach(paintNote);
-      paintBox();
-      if (state.mode === "star") draw();
-    }, function(){});
-  }).catch(function(){ noteReady("この画面ではメモを保存できません。"); });
+    if (x) useShared(x); else useLocal();
+  }).catch(useLocal);
 } else {
-  noteReady("この画面ではメモを保存できません。");
+  useLocal();
 }
 
 /* ---------- `?diag=1` — 動かない画面から、事実を持ち帰る ----------
