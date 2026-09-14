@@ -156,6 +156,25 @@ main{padding:20px 26px 70px;}
   cursor:zoom-out;transition:transform .18s ease;transform-origin:center center;}
 .lbox img.lzoom{cursor:grab;transition:none;}
 .lbox img.lgrab{cursor:grabbing;}
+/* **前後へ送る矢印は、絵の「外」に置く。**絵に重ねると、左右の端——柄が
+   いちばん続いて写っている所——をちょうど隠す。暗幕の帯はもともと押すと
+   閉じる場所なので、そこへ置く的は**小さく、真ん中の高さに 1 つずつ**に
+   留める。残りの帯は今までどおり閉じる。
+   乗せられる画面にだけ出す（`any-hover`）——指の画面には下の
+   ［← 前］［次 →］が既にあり、二重に置く意味が無い。
+   薄く出しておいて、乗せると濃くする。**まったく見えない所に的を置くと、
+   在ることを知っている人しか使えない。** */
+.lbox .ledge{position:absolute;top:50%;transform:translateY(-50%);
+  width:54px;height:54px;border-radius:50%;border:0;padding:0;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.13);color:#fff;font:inherit;font-size:19px;
+  line-height:1;cursor:pointer;
+  transition:opacity .15s ease,background .15s ease;opacity:.42;}
+.lbox .ledge.prev{left:16px;}
+.lbox .ledge.next{right:16px;}
+.lbox .ledge:hover{opacity:1;background:rgba(255,255,255,.3);}
+.lbox .ledge:focus-visible{opacity:1;outline:2px solid #fff;outline-offset:2px;}
+@media (any-hover: none){.lbox .ledge{display:none;}}
 .lbox .lcap{color:#fff;cursor:default;text-align:center;max-width:80ch;
   font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.6;}
 .lbox .lnav{display:flex;gap:8px;align-items:center;cursor:default;}
@@ -774,6 +793,15 @@ function _lb_apply(){
      値は class より強いので、残すと拡大しても `zoom-in` のままになる。 */
   img.style.cursor = "";
   if (lbZ <= 1) img.classList.remove("lgrab");
+  _lb_edges();
+}
+function _lb_edges(){
+  /* **拡大しているあいだは引っ込める。**あの状態で左右の端にあるのは
+     「絵の続き」なので、そこに送りの的があると引きずる手とぶつかる。 */
+  if (!lbox || !lbox._ep || !lbList) return;
+  var many = lbList.length > 1, big = lbZ > 1;
+  lbox._ep.hidden = big || !many || lbAt <= 0;
+  lbox._en.hidden = big || !many || lbAt >= lbList.length - 1;
 }
 function _lb_fit(){ lbZ = 1; lbTx = lbTy = 0; _lb_apply(); }
 function _lb_zoom_at(x, y){
@@ -874,9 +902,21 @@ function zoom(list, at, back){
     nx.addEventListener("click", function(){ lstep(1); });
     cl.addEventListener("click", unzoom);
     nav.appendChild(pv); nav.appendChild(nm); nav.appendChild(nx); nav.appendChild(cl);
+    /* 絵の外の左右に置く送り。`stopPropagation` が要る——暗幕の押下は
+       閉じる仕掛けなので、通すとこの矢印を押した瞬間に閉じる。 */
+    var ep = document.createElement("button");
+    ep.type = "button"; ep.className = "ledge prev"; ep.textContent = "←";
+    ep.setAttribute("aria-label", "前の絵");
+    var en = document.createElement("button");
+    en.type = "button"; en.className = "ledge next"; en.textContent = "→";
+    en.setAttribute("aria-label", "次の絵");
+    ep.addEventListener("click", function(e){ e.stopPropagation(); lstep(-1); });
+    en.addEventListener("click", function(e){ e.stopPropagation(); lstep(1); });
     lbox.appendChild(img); lbox.appendChild(cap); lbox.appendChild(nav);
+    lbox.appendChild(ep); lbox.appendChild(en);
     lbox._img = img; lbox._cap = cap; lbox._num = nm;
     lbox._prev = pv; lbox._next = nx; lbox._close = cl;
+    lbox._ep = ep; lbox._en = en;
   }
   if (!lbox.parentNode) document.body.appendChild(lbox);
   lpaint();
@@ -895,6 +935,7 @@ function lpaint(){
   lbox._prev.disabled = lbAt <= 0;
   lbox._next.disabled = lbAt >= lbList.length - 1;
   lbox._prev.hidden = lbox._next.hidden = lbox._num.hidden = !many;
+  _lb_edges();
 }
 function lstep(g){
   var i = lbAt + g;
