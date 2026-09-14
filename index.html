@@ -402,6 +402,7 @@ function makeCard(r){
     goTo(r.num);
   });
   if (!REDUCED && shown.length > 1){
+    b._wired = true;
     b.addEventListener("mouseenter", function(){ if (!touched_just_now()) play(b); });
     b.addEventListener("focus", function(){ if (!touched_just_now()) play(b); });
     b.addEventListener("mouseleave", function(){ stop(b); });
@@ -1078,6 +1079,66 @@ if (window.claude && window.claude.use){
   }).catch(function(){ noteReady("この画面ではメモを保存できません。"); });
 } else {
   noteReady("この画面ではメモを保存できません。");
+}
+
+/* ---------- `?diag=1` — 動かない画面から、事実を持ち帰る ----------
+   乗せると絵が送られる仕掛けが、こちらでは動くのに利用者の PC では
+   動かない、という状態が続いた。**手元で測っても、動いている画面を
+   測っているだけ**なので何も分からない。門を 2 度当て推量で外して
+   2 度とも外れたので、推測をやめて、動かない画面そのものに喋らせる。
+
+   開発者ツールを開かずに済むよう、URL に `?diag=1` を足すと右上に
+   小さな窓が出る形にしてある。数えるのは **document の側**で、札に
+   仕掛けが付いたかどうかとは独立に数える——付いていないのか、付いた
+   のに `mouseenter` が来ないのかは、**別々の壊れ方**で、片方だけでは
+   見分けが付かない。 */
+if (/[?&]diag=1/.test(location.search)){
+  var dg = document.createElement("div");
+  dg.setAttribute("style",
+    "position:fixed;top:8px;right:8px;z-index:9999;max-width:340px;" +
+    "background:#111;color:#eee;font:12px/1.6 ui-monospace,monospace;" +
+    "padding:10px 12px;border-radius:6px;white-space:pre-wrap;" +
+    "box-shadow:0 4px 18px rgba(0,0,0,.45);pointer-events:none;");
+  document.body.appendChild(dg);
+  var seen = {enter: 0, over: 0, move: 0, focus: 0, touch: 0, play: 0};
+  document.addEventListener("mouseover", function(e){
+    if (e.target.closest && e.target.closest(".card")) seen.over++;
+  }, true);
+  document.addEventListener("mousemove", function(e){
+    if (e.target.closest && e.target.closest(".card")) seen.move++;
+  }, true);
+  document.addEventListener("mouseenter", function(e){
+    if (e.target.closest && e.target.closest(".card")) seen.enter++;
+  }, true);
+  document.addEventListener("focusin", function(e){
+    if (e.target.closest && e.target.closest(".card")) seen.focus++;
+  }, true);
+  document.addEventListener("touchstart", function(){ seen.touch++; },
+                            {passive: true, capture: true});
+  function mq(q){ return window.matchMedia && window.matchMedia(q).matches; }
+  setInterval(function(){
+    var first = document.querySelector(".grid .card");
+    var on = -1, n = 0, wired = "－";
+    if (first){
+      var im = first.querySelectorAll("img");
+      n = im.length;
+      for (var i = 0; i < im.length; i++) if (im[i].classList.contains("on")) on = i;
+      wired = first._wired ? "付いた" : "付いていない";
+    }
+    if (playing) seen.play++;
+    dg.textContent =
+      "動き控えめ設定: " + (REDUCED ? "入（これが原因）" : "切") + "\n" +
+      "hover:hover     " + mq("(hover: hover)") + "\n" +
+      "any-hover:hover " + mq("(any-hover: hover)") + "\n" +
+      "タッチ点数: " + (navigator.maxTouchPoints || 0) + "\n" +
+      "札 " + document.querySelectorAll(".grid .card").length +
+      " 枚 / 1枚目の絵 " + n + " 枚 / 仕掛け: " + wired + "\n" +
+      "mouseover " + seen.over + " / mousemove " + seen.move +
+      " / mouseenter " + seen.enter + "\n" +
+      "focus " + seen.focus + " / touch " + seen.touch + "\n" +
+      "自動送り: " + (playing ? "動いている" : "止まっている") +
+      " / いま " + (on + 1) + " 枚目";
+  }, 250);
 }
 })();
 </script>
