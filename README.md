@@ -10,7 +10,7 @@ Blender アドオン **Fabric 3D Texture Generator**（Stratasys J850 向けの
 ## このリポジトリの中身
 
     index.html   1枚だけ。作例の説明と絵の一覧
-    img/         作例の絵（幅560px・JPEG）
+    img/         作例の絵（幅900px・JPEG）
     .nojekyll    GitHub Pages に Jekyll を通させない
 
 **手で編集しない。** 組み立てるのは stratasys_addon 側の
