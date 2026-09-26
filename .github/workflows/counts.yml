@@ -1,0 +1,33 @@
+# 作例帳の閲覧数を 1 日 1 回取り込む。
+# このファイルはサイトで直さないこと——原本はプロジェクト側の
+# docs/away/tools/cards/site_extra/counts.yml で、build_cards.py が組み直す
+# たびに上書きする。
+name: 閲覧数を取り込む
+on:
+  schedule:
+    - cron: "17 18 * * *"   # 毎日 03:17（日本時間）
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: counts
+  cancel-in-progress: false
+jobs:
+  counts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: GoatCounter から取る
+        env:
+          GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
+        run: python3 .github/fetch_counts.py
+      - name: 変わっていれば固める
+        run: |
+          if [ -z "$(git status --porcelain -- counts.json)" ]; then
+            echo "変化なし"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add counts.json
+          git commit -m "閲覧数を更新"
+          git push
