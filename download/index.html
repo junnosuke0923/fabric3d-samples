@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ダウンロード — Fabric 3D Texture Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#F4F5F2;--paper:#FFFFFF;--ink:#1C1E23;--ink-2:#5C6169;--rule:#D8DBD4;--accent:#243F7A;--accent-ink:#FFFFFF;--code:#ECEEE9;--shadow:0 1px 2px rgba(28,30,35,.06),0 6px 18px rgba(28,30,35,.07)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#15171B;--paper:#1D2026;--ink:#E7E8E3;--ink-2:#A2A7AE;--rule:#33373E;--accent:#93ABE3;--accent-ink:#0F172A;--code:#262A31;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--bg:#15171B;--paper:#1D2026;--ink:#E7E8E3;--ink-2:#A2A7AE;--rule:#33373E;--accent:#93ABE3;--accent-ink:#0F172A;--code:#262A31;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.35)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,sans-serif;font-size:15px;line-height:1.75}
+a{color:var(--accent)}
+.top{border-bottom:1px solid var(--rule);padding:12px 20px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.top .name{margin:0;font-family:"Shippori Mincho",serif;font-weight:600;font-size:21px}
+.top nav{margin-left:auto;display:flex;gap:16px;font-size:13.5px}
+.top nav a{text-decoration:none;color:var(--ink-2)} .top nav a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+main{max-width:1040px;margin:0 auto;padding:28px 20px 60px;min-width:0}
+h1{font-family:"Shippori Mincho",serif;font-weight:600;font-size:26px;margin:0 0 6px;text-wrap:balance}
+h2{font-family:"Shippori Mincho",serif;font-weight:600;font-size:19px;margin:0;text-wrap:balance}
+.meta{color:var(--ink-2);font-size:13px}
+.vpill,.mono,.hash,.ver{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.vpill{font-size:13px;background:var(--code);padding:2px 8px;border-radius:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.two>*{min-width:0}
+.card{background:var(--paper);border:1px solid var(--rule);border-radius:4px;box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-direction:column;gap:12px}
+.card>*{min-width:0;margin:0}
+.who{font-size:12px;letter-spacing:.08em;color:var(--ink-2)}
+.btn{display:inline-flex;flex-wrap:wrap;align-items:center;gap:10px;padding:11px 18px;border-radius:3px;background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:500;border:1px solid var(--accent)}
+.btn small{font-family:"IBM Plex Mono",monospace;font-size:12px;opacity:.8;font-weight:400}
+.btn:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ol.steps{padding-left:1.3em} ol.steps li{margin:4px 0}
+.url{display:flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden;background:var(--code)}
+.url code{flex:1;min-width:0;padding:8px 10px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;overflow-x:auto;white-space:nowrap}
+.url button{font:inherit;font-size:13px;border:0;border-left:1px solid var(--rule);background:var(--paper);color:var(--ink);padding:0 14px;cursor:pointer;white-space:nowrap}
+details{margin-top:30px;border-top:1px solid var(--rule);padding-top:14px}
+summary{cursor:pointer;font-family:"Shippori Mincho",serif;font-weight:600;font-size:18px}
+.log{list-style:none;margin:10px 0 0;padding:0}
+.log li{display:grid;grid-template-columns:7.5em 1fr;gap:4px 16px;padding:12px 0;border-top:1px solid var(--rule)}
+.log .ver{font-size:13.5px;font-weight:500} .log .date{display:block;font-size:12px;color:var(--ink-2)}
+.log p{margin:0}
+.tag{font-size:11px;letter-spacing:.06em;padding:1px 7px;border-radius:2px;margin-right:6px;white-space:nowrap;vertical-align:1px}
+.tag.fix{box-shadow:inset 0 0 0 1px var(--rule);color:var(--ink-2)} .tag.new{background:var(--accent);color:var(--accent-ink)}
+.hashes{margin-top:22px;display:grid;gap:4px}
+.hash{font-size:11.5px;color:var(--ink-2);word-break:break-all}
+.official{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:14px;margin-top:24px}
+.official b{color:var(--ink)}
+@media (max-width:760px){.two{grid-template-columns:1fr} h1{font-size:22px}}
+@media (max-width:640px){.log li{grid-template-columns:1fr} .top nav{margin-left:0}}
+</style>
+</head>
+<body>
+<header class="top"><p class="name">Fabric 3D Texture Generator</p>
+<nav><a href="../">作例帳</a><a href="../help/ja.html">ヘルプ</a><a href="./" aria-current="page">ダウンロード</a></nav></header>
+<main>
+<h1>画像から、布に刷れる立体を。</h1>
+<p class="meta" style="margin:0">いまの版 <span class="vpill">v7.264.0</span>（2026-09-28）・ Blender 5.0 以降</p>
+<div class="two">
+<section class="card"><div class="who">はじめて使う方</div><h2>配布一式をダウンロード</h2>
+<p>アドオン本体に、ヘルプ・スライド資料・見本の動画・CLO 連携が入っています。中の「はじめにお読みください」から始めてください。</p>
+<div><a class="btn" href="https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.264.0/Fabric3DTextureGenerator-7.264.0-full.zip">ダウンロード <small>ZIP 108.0MB</small></a></div>
+<p class="meta"><a href="https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.264.0/fabric_3d_texture-7.264.0.zip">アドオンだけ（35.8MB）</a> ／ <a href="https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.264.0/fabric_3d_clo-0.4.17.zip">CLO 連携だけ（v0.4.17・0.14MB）</a></p></section>
+<section class="card"><div class="who">もう使っている方</div><h2>Blender に更新を知らせてもらう</h2>
+<ol class="steps"><li>Blender の［編集］→［プリファレンス］→［機能拡張を入手］を開く</li>
+<li>右上の［リポジトリ］→［＋］→［リモートリポジトリを追加］に、次の URL を貼る</li>
+<li>一覧に出た Fabric 3D Texture Generator の［インストール］を押す</li></ol>
+<div class="url"><code id="repo">https://junnosuke0923.github.io/fabric3d-samples/extensions/index.json</code><button type="button" id="copy">コピー</button></div>
+<p class="meta">以後、新しい版が出ると Blender に知らせが出て、［更新］を押すだけで入れ替わります。CLO 連携は知らせの対象外なので、配布一式か上のリンクから入れ替えてください。</p></section>
+</div>
+<details open><summary>更新の履歴</summary>
+<ul class="log"><li><div><span class="ver">v7.264.0</span><span class="date">2026-09-28</span></div><p><span class="tag fix">修正</span>透明の外皮と［先細り］を併用すると、中の色が透明の外へはみ出していたのを直しました。</p></li><li><div><span class="ver">v7.263.0</span><span class="date">2026-09-28</span></div><p><span class="tag fix">修正</span>［輪郭スムーズ］を入れても［輪郭を画像に沿わせる］が効くようにしました。透明の外皮と［ふくらみ］で、中の色が外皮を突き抜けていたのも直しました。</p></li><li><div><span class="ver">v7.262.0</span><span class="date">2026-09-27</span></div><p><span class="tag new">追加</span>［ふくらみ形状］に「カット」を追加しました。宝石のような切子面が作れます。</p></li><li><div><span class="ver">v7.261.0</span><span class="date">2026-09-27</span></div><p><span class="tag new">追加</span>分けた島を選ぶと、いまどの島を調整しているかと、設定が島ごとに効くことを表示します。</p></li><li><div><span class="ver">v7.260.0</span><span class="date">2026-09-26</span></div><p><span class="tag new">追加</span>割れ線を追加しました。描いた所には形を作らず、割る・彫る・消すの 3 つのペンで描けます。</p></li><li><div><span class="ver">v7.259.0</span><span class="date">2026-09-24</span></div><p><span class="tag fix">修正</span>ヘルプの図が、カーソルを乗せている間は自動でコマ送りされるようにしました。</p></li></ul>
+<p class="meta"><a href="https://github.com/junnosuke0923/fabric3d-samples/releases">これまでの版をすべて見る（GitHub）</a></p>
+</details>
+<div class="hashes"><div class="meta">ファイルの指紋（SHA-256）</div>
+<div class="hash">配布一式　95755c4a3652b64b48953a35e248a039872d3a91b54ff30cbc6248c495287b7b</div>
+<div class="hash">アドオン　04e3d3ba61b8296bd2933b78ff1f0a3bf3a75f07bfeaa3a1e746dfeb3007fbef</div>
+<div class="hash">CLO 連携　2281d3e871f7a812a28329b52d9476a9e7053d0277b958b0a892e7bfc4a92838</div></div>
+<div class="official"><span aria-hidden="true">🔒</span><div><b>公式の入手先は、このページと Blender の更新の登録先だけです。</b>
+ほかの場所で配られている物は、改変されている可能性があります。ダウンロードしたファイルの指紋が上の値と一致するかで確かめられます。
+作者：加藤 淳之介 ／ ライセンス：GPL-3.0-or-later（改変版の扱いは同梱の NOTICE）</div></div>
+</main>
+<script>
+(function(){
+  var b=document.getElementById("copy"), c=document.getElementById("repo");
+  b.addEventListener("click",function(){
+    var t=c.textContent, done=function(){b.textContent="コピーしました";setTimeout(function(){b.textContent="コピー"},2000)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,sel)}else{sel()}
+    function sel(){var r=document.createRange();r.selectNodeContents(c);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="選択しました"}
+  });
+})();
+</script>
+</body>
+</html>
