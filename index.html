@@ -32,6 +32,12 @@ body{background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,
      padding:12px 26px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;}
 .top h1{margin:0;font-family:"Shippori Mincho",serif;font-weight:600;font-size:21px;letter-spacing:.02em;}
 .top .count{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;color:var(--ink-2);}
+/* 公開サイトどうしの行き来（作例帳・ヘルプ・ダウンロード）。ダウンロードページの帯と同じ見た目。
+   公開サイトの分にだけ入る（build_cards.py の SITE_NAV の注記）。 */
+.top nav{display:flex;gap:16px;font-size:13.5px;}
+.top nav a{text-decoration:none;color:var(--ink-2);}
+.top nav a:hover{color:var(--ink);}
+.top nav a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent);}
 .tools{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;align-items:center;}
 .seg{display:flex;border:1px solid var(--rule);border-radius:3px;overflow:hidden;background:var(--paper);}
 .seg button{font:inherit;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;
@@ -294,6 +300,7 @@ strong{font-weight:600;}
 <header class="top">
   <h1>作例帳</h1>
   <span class="count" id="count"></span>
+  <nav aria-label="サイト内"><a href="./" aria-current="page">作例帳</a><a href="help/ja.html">ヘルプ</a><a href="download/">ダウンロード</a></nav>
   <div class="tools">
     <div class="seg" id="fmode">
       <button data-v="all" aria-pressed="true">すべて</button>
