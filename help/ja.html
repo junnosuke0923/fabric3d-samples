@@ -96,7 +96,7 @@ button{font:inherit;padding:.15rem .7rem;border-radius:.35rem;cursor:pointer;
  border:1px solid rgba(128,128,128,.5);background:transparent;color:inherit}
 </style></head><body>
 <h1>Fabric 3D Texture Generator ヘルプ</h1>
-<p class='sub'>build 7.266.0 · © 2025-2026 Junnosuke Kato</p>
+<p class='sub'>build 7.267.0 · © 2025-2026 Junnosuke Kato</p>
 <script>function figerr(el){el.style.display='none';var d=document.getElementById('figwarn');if(d)d.hidden=false;}</script>
 <p id='figwarn' hidden style='border:1px solid #c44;border-radius:.4rem;padding:.6rem .8rem;max-width:52rem'>図が読み込めません。この HTML は、隣の「help_figs」フォルダと一緒に置いてください</p>
 <nav><a href='#s0'>このツールについて</a><a href='#s1'>柱モードと面モード</a><a href='#s2'>画面の見方</a><a href='#s3'>進め方</a><a href='#s4'>柱モードの設定</a><a href='#s5'>面モードの設定</a><a href='#sx'>両方に使う設定</a><a href='#s6'>造形の制約</a><a href='#s7'>困ったときは</a><a href='#s8'>全項目リファレンス</a></nav>
@@ -118,7 +118,7 @@ button{font:inherit;padding:.15rem .7rem;border-radius:.35rem;cursor:pointer;
 <h3>① 画像を選ぶ</h3><p>生成設定パネルの「参照データ（画像）」で、PNG（透過つき）を選びます。透明な部分には何も作られません。明るさが高さや太さになります。</p>
 <h3>② プレビューを作る</h3><p>「プレビュー生成」を押します。粗い解像度で素早く作られるので、ここで形を決めます。</p>
 <h3>③ 調整する</h3><p>プレビュー調整パネルで、大きさ・形・太さ・高さ・色を変えます。触るとその場で反映されます。</p>
-<h3>④ 最終生成して書き出す</h3><p>「最終生成」で高い解像度に作り直し、エクスポートパネルからOBJ か PLY で書き出します。</p>
+<h3>④ 最終生成して書き出す</h3><p>「最終生成」で高い解像度に作り直し、エクスポートパネルからOBJ で書き出します。</p>
 <p>生成設定パネルは①を済ませたら閉じてかまいません。同じ項目はプレビュー調整パネルにもあり、そちらは結果を見ながら変えられます。</p>
 <h2 id='s4'>柱モードの設定</h2>
 <p>細い柱を、どう並べてどう見せるかを決めます。どの項目もプレビュー調整パネルにあり、触るとその場で反映されます。</p>
@@ -1377,7 +1377,7 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 </table>
 <h4>書き出し（15）</h4>
 <table><tr><th>項目</th><th>説明</th><th>値</th></tr>
-<tr><td class='k'>形式<br><span class='i'>export_format</span></td><td>書き出す形式です。Stratasys GrabCAD PrintではOBJ形式をおすすめします</td><td>OBJ / PLY / STL</td></tr>
+<tr><td class='k'>形式<br><span class='i'>export_format</span></td><td>書き出す形式です。J850（GrabCAD Print）へ送るならOBJを選んでください。STLは形だけで、色を持ちません</td><td>OBJ / STL</td></tr>
 <tr><td class='k'>統合して1ファイル<br><span class='i'>export_merge_objects</span></td><td>複数のオブジェクトを1つのOBJファイルにまとめて書き出します。テクスチャは1枚だけなので、元の画像が違うものどうしは統合できません</td><td></td></tr>
 <tr><td class='k'>底面Z=0を保証<br><span class='i'>export_enforce_z0</span></td><td>書き出す前に、いちばん低い面がZ=0になるよう自動で合わせます</td><td></td></tr>
 <tr><td class='k'>Z=0の扱い<br><span class='i'>export_z0_mode</span></td><td>Z=0に合わせる方法です。自動＝ずれていたら直す、常に＝毎回合わせる、しない＝そのまま書き出します</td><td>自動でZ=0へ合わせる / 警告して中止</td></tr>
@@ -1403,10 +1403,13 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>明るさ<br><span class='i'>lighting_intensity</span></td><td>照明全体の明るさの倍率です。1.0が基準で、すべての光に同じ倍率がかかるので陰影のバランスは変わりません</td><td>範囲 0.05 〜 4 ／ 既定 1</td></tr>
 <tr><td class='k'>カスタムスロット<br><span class='i'>camera_custom_slot</span></td><td>カメラの位置を覚えさせておく番号です。番号ごとに別の視点を保存できます</td><td>範囲 1 〜 3 ／ 既定 1</td></tr>
 </table>
-<h4>その他（3）</h4>
+<h4>その他（6）</h4>
 <table><tr><th>項目</th><th>説明</th><th>値</th></tr>
 <tr><td class='k'>色A<br><span class='i'>side_dir_color_a</span></td><td>［向き(度)］の方を向いた側面の色です（側面の色を「向きで塗り分け」にしたときだけ使われます）</td><td></td></tr>
 <tr><td class='k'>色B<br><span class='i'>side_dir_color_b</span></td><td>［向き(度)］と反対を向いた側面の色です（側面の色を「向きで塗り分け」にしたときだけ使われます）</td><td></td></tr>
 <tr><td class='k'>向き(度)<br><span class='i'>side_dir_angle</span></td><td>色Aの側面が向く方角です。0°で右（画像の右）、90°で奥（画像の上）、180°で左。その方から見ると色A、反対から見ると色Bに見えます</td><td>範囲 -180 〜 180 ／ 既定 0</td></tr>
+<tr><td class='k'>塗り方<br><span class='i'>side_dir_fill</span></td><td>向きで塗り分けるときの、側面の塗り方です</td><td>2色 / グラデーション / 画像</td></tr>
+<tr><td class='k'>画像A<br><span class='i'>side_dir_image_a</span></td><td>［向き(度)］の方を向いた側面に使う画像です。上面の画像と同じ所の画素を拾います（塗り方が「画像」のときだけ使われます。空なら色A）</td><td></td></tr>
+<tr><td class='k'>画像B<br><span class='i'>side_dir_image_b</span></td><td>［向き(度)］と反対を向いた側面に使う画像です。上面の画像と同じ所の画素を拾います（塗り方が「画像」のときだけ使われます。空なら色B）</td><td></td></tr>
 </table>
 </body></html>
