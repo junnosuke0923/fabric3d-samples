@@ -96,7 +96,7 @@ button{font:inherit;padding:.15rem .7rem;border-radius:.35rem;cursor:pointer;
  border:1px solid rgba(128,128,128,.5);background:transparent;color:inherit}
 </style></head><body>
 <h1>Fabric 3D Texture Generator ヘルプ</h1>
-<p class='sub'>build 7.264.0 · © 2025-2026 Junnosuke Kato</p>
+<p class='sub'>build 7.265.0 · © 2025-2026 Junnosuke Kato</p>
 <script>function figerr(el){el.style.display='none';var d=document.getElementById('figwarn');if(d)d.hidden=false;}</script>
 <p id='figwarn' hidden style='border:1px solid #c44;border-radius:.4rem;padding:.6rem .8rem;max-width:52rem'>図が読み込めません。この HTML は、隣の「help_figs」フォルダと一緒に置いてください</p>
 <nav><a href='#s0'>このツールについて</a><a href='#s1'>柱モードと面モード</a><a href='#s2'>画面の見方</a><a href='#s3'>進め方</a><a href='#s4'>柱モードの設定</a><a href='#s5'>面モードの設定</a><a href='#sx'>両方に使う設定</a><a href='#s6'>造形の制約</a><a href='#s7'>困ったときは</a><a href='#s8'>全項目リファレンス</a></nav>
@@ -1178,7 +1178,7 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <table><tr><th>項目</th><th>説明</th><th>値</th></tr>
 <tr><td class='k'>カラーモード<br><span class='i'>color_mode</span></td><td>柱にどう色を付けるかを選びます</td><td>画像色を単色で反映 / テクスチャマッピング / 高さでグラデーション</td></tr>
 <tr><td class='k'>柱ごとに全色を出す<br><span class='i'>height_ramp_per_pillar</span></td><td>入れると、背の低い柱でもその柱の中で全部の色を通ります。切ると、いちばん高い柱を基準に割るので背の低い柱には下のほうの色しか出ません</td><td></td></tr>
-<tr><td class='k'>側面の色<br><span class='i'>pillar_side_color_mode</span></td><td>柱の側面の色をどこから取るかを選びます。「高さ方向のグラデーション」はカラーモードがテクスチャマッピングのときだけ使えます</td><td>上面と同じ / 高さ方向のグラデーション / 単色 / 画像の平均色</td></tr>
+<tr><td class='k'>側面の色<br><span class='i'>pillar_side_color_mode</span></td><td>柱の側面の色をどこから取るかを選びます。「高さ方向のグラデーション」はカラーモードがテクスチャマッピングのときだけ使えます</td><td>上面と同じ / 高さ方向のグラデーション / 単色 / 画像の平均色 / 向きで塗り分け</td></tr>
 <tr><td class='k'>側面の色（単色）<br><span class='i'>pillar_side_solid_color</span></td><td>側面に使う色です（側面の色を「単色」にしたときだけ使われます）。書き出したOBJではMTLの色として出力されます</td><td></td></tr>
 </table>
 <h4>透明（11）</h4>
@@ -1276,7 +1276,7 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>ランダム強度<br><span class='i'>surface_flex_split_random_strength</span></td><td>ランダム／ボロノイのときの崩し具合です。0で規則正しく、1で最も不規則になります。上げるとセルの大小の差が開き、小さいセルが隙間に飲まれて消えるため、その場所の隙間が広がります（実測: 1.0で最大6.0mm、0.5以下なら格子と同じ1.5mm）</td><td>範囲 0 〜 1 ／ 既定 0.50</td></tr>
 <tr><td class='k'>最小タイルサイズ(mm)<br><span class='i'>surface_flex_split_min_tile_size_mm</span></td><td>これより小さいタイルを削除します。縁にできる欠片を取り除きたいときに使います（0で削除しません）</td><td>範囲 0 〜 10 ／ 既定 1</td></tr>
 <tr><td class='k'>画像の色を反映（テクスチャ）<br><span class='i'>surface_use_texture</span></td><td>画像を貼り付けて、面に元画像の色を出します</td><td></td></tr>
-<tr><td class='k'>側面の色<br><span class='i'>surface_side_color_mode</span></td><td>立ち上がった側面の色をどこから取るかを選びます</td><td>テクスチャに合わせる / 単色 / 平均色（画像）</td></tr>
+<tr><td class='k'>側面の色<br><span class='i'>surface_side_color_mode</span></td><td>立ち上がった側面の色をどこから取るかを選びます</td><td>テクスチャに合わせる / 単色 / 平均色（画像） / 向きで塗り分け</td></tr>
 <tr><td class='k'>側面色<br><span class='i'>surface_side_solid_color</span></td><td>側面に使う色です（側面の色を「単色」にしたときだけ使われます）</td><td></td></tr>
 <tr><td class='k'>透明しきい値<br><span class='i'>surface_alpha_threshold</span></td><td>画像の透明度がこの値より低い部分は造形しません。0に近いほど半透明の縁まで残り、1に近いほど不透明な部分だけが残ります</td><td>範囲 0 〜 1 ／ 既定 0.50</td></tr>
 <tr><td class='k'>輪郭を画像に沿わせる<br><span class='i'>surface_contour_snap</span></td><td>輪郭の頂点を画像の形の上へ寄せて、マス目なりの階段をなくします。頂点は増えません。輪郭オフセット・組み立て余白・等高線リブ・割れ線と、分割の一部（ランダムなど）を使ったときは自動で無効になります。輪郭スムーズで形が変わった所には効きません</td><td></td></tr>
@@ -1402,5 +1402,11 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>ライティングプリセット<br><span class='i'>lighting_preset</span></td><td>照明の組み合わせを選びます</td><td>スタジオ / 自然光 / ドラマチック / ソフト</td></tr>
 <tr><td class='k'>明るさ<br><span class='i'>lighting_intensity</span></td><td>照明全体の明るさの倍率です。1.0が基準で、すべての光に同じ倍率がかかるので陰影のバランスは変わりません</td><td>範囲 0.05 〜 4 ／ 既定 1</td></tr>
 <tr><td class='k'>カスタムスロット<br><span class='i'>camera_custom_slot</span></td><td>カメラの位置を覚えさせておく番号です。番号ごとに別の視点を保存できます</td><td>範囲 1 〜 3 ／ 既定 1</td></tr>
+</table>
+<h4>その他（3）</h4>
+<table><tr><th>項目</th><th>説明</th><th>値</th></tr>
+<tr><td class='k'>色A<br><span class='i'>side_dir_color_a</span></td><td>［向き(度)］の方を向いた側面の色です（側面の色を「向きで塗り分け」にしたときだけ使われます）</td><td></td></tr>
+<tr><td class='k'>色B<br><span class='i'>side_dir_color_b</span></td><td>［向き(度)］と反対を向いた側面の色です（側面の色を「向きで塗り分け」にしたときだけ使われます）</td><td></td></tr>
+<tr><td class='k'>向き(度)<br><span class='i'>side_dir_angle</span></td><td>色Aの側面が向く方角です。0°で右（画像の右）、90°で奥（画像の上）、180°で左。その方から見ると色A、反対から見ると色Bに見えます</td><td>範囲 -180 〜 180 ／ 既定 0</td></tr>
 </table>
 </body></html>

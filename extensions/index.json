@@ -7,7 +7,7 @@
       "id": "fabric_3d_texture",
       "name": "Fabric 3D Texture Generator",
       "tagline": "Make 3D printable textures for fabric from an image",
-      "version": "7.264.0",
+      "version": "7.265.0",
       "type": "add-on",
       "maintainer": "Junnosuke Kato",
       "license": [
@@ -21,9 +21,9 @@
         "Mesh",
         "Import-Export"
       ],
-      "archive_url": "https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.264.0/fabric_3d_texture-7.264.0.zip",
-      "archive_size": 37524859,
-      "archive_hash": "sha256:04e3d3ba61b8296bd2933b78ff1f0a3bf3a75f07bfeaa3a1e746dfeb3007fbef"
+      "archive_url": "https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.265.0/fabric_3d_texture-7.265.0.zip",
+      "archive_size": 37528837,
+      "archive_hash": "sha256:4df1a8cd96c9d7b1685182184a247e6fc223cce1e8aa9c414f8f02e73f1aa0a7"
     }
   ]
 }
