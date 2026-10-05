@@ -38,6 +38,7 @@ h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:36px;line-heigh
 .btn{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;align-items:baseline;background:var(--gold);color:var(--gold-ink);padding:12px 24px;border-radius:2px;text-decoration:none;font-weight:700}
 .btn small{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:12px}
 .sub{font-size:12.5px;color:var(--ink-3);margin-top:12px;line-height:1.7} .sub a{color:#D5DAE4}
+.sub .drop{color:var(--ink);font-weight:500}
 .pp{position:absolute;z-index:3;right:14px;bottom:12px;font:inherit;font-size:12px;color:#D5DAE4;background:rgba(17,21,32,.8);border:1px solid var(--line);border-radius:2px;padding:4px 10px;cursor:pointer}
 .more{display:block;width:max-content;max-width:calc(100% - 32px);margin:10px auto 0;font-size:13.5px;color:var(--gold);text-decoration:none}
 .more:hover{text-decoration:underline}
@@ -97,6 +98,7 @@ ol.steps{padding-left:1.3em} ol.steps li{margin:4px 0}
 <p>背景はすべて、このアドオンで作った作例です。押すと作例帳で開きます。</p>
 <a class="btn" href="https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.267.0/Fabric3DTextureGenerator-7.267.0-full.zip">配布一式をダウンロード <small>ZIP 108.0MB</small></a>
 <div class="sub">v7.267.0（2026-10-04）・ Blender 5.0 以降<br>
+<span class="drop">Blender へドロップするのは、この ZIP を解凍した中の「01_アドオン_fabric_3d_texture-7.267.0.zip」です（この ZIP のままでは入りません）。</span><br>
 アドオン本体に、ヘルプ・スライド資料・見本の動画・CLO 連携が入っています。中の「はじめにお読みください」から始めてください。<br>
 <a href="https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.267.0/fabric_3d_texture-7.267.0.zip">アドオンだけ（35.8MB）</a> ／ <a href="https://github.com/junnosuke0923/fabric3d-samples/releases/download/v7.267.0/fabric_3d_clo-0.4.17.zip">CLO 連携だけ（v0.4.17・0.14MB）</a><br>
 <a href="#guide">使い方をスライド資料で先に見る ↓</a></div></div>
@@ -116,7 +118,7 @@ ol.steps{padding-left:1.3em} ol.steps li{margin:4px 0}
 <li>一覧に出た Fabric 3D Texture Generator の［インストール］を押す</li></ol>
 <div class="url"><code id="repo">https://junnosuke0923.github.io/fabric3d-samples/extensions/index.json</code><button type="button" id="copy">コピー</button></div>
 <p class="meta">以後、新しい版が出ると Blender に知らせが出て、［更新］を押すだけで入れ替わります。CLO 連携は知らせの対象外なので、配布一式か上のリンクから入れ替えてください。</p>
-<p class="meta"><b>ZIP をドラッグして入れた方へ：</b>先に［プリファレンス］→［機能拡張］の一覧で Fabric 3D Texture Generator を［アンインストール］してから、上の手順で入れ直してください（ZIP から入れたものには、更新の知らせが届きません）。</p></section>
+<p class="meta"><b>アドオンの ZIP をドラッグして入れた方へ：</b>先に［プリファレンス］→［機能拡張］の一覧で Fabric 3D Texture Generator を［アンインストール］してから、上の手順で入れ直してください（ZIP から入れたものには、更新の知らせが届きません）。</p></section>
 <section class="card"><div class="who">これまでの変更</div><h2>更新の履歴</h2>
 <ul class="log"><li><div><span class="ver">v7.267.0</span><span class="date">2026-10-04</span></div><p><span class="tag new">追加</span>［側面の色］の「向きで塗り分け」に［塗り方］を追加しました。2 色のほか、側面の向きに合わせて色A と色B をなめらかに移す「グラデーション」と、2 枚の画像から色を拾う「画像」が選べます（柱・面とも）。書き出しの形式から PLY を外しました（GrabCAD Print で読み込めないため）。</p></li><li><div><span class="ver">v7.266.0</span><span class="date">2026-10-04</span></div><p><span class="tag fix">修正</span>［側面の色］が書き出したファイルで画面と違っていたのを直しました。画面より暗くなる・透明ありで書き出すと消える・［画像の平均色］が同じ画像でもずれる、の 3 点です。PLY で書き出すときは、側面の色が画面どおりに載らないことをお知らせします。</p></li><li><div><span class="ver">v7.265.0</span><span class="date">2026-10-04</span></div><p><span class="tag new">追加</span>［側面の色］に「向きで塗り分け」を追加しました。決めた向きに面した側面とその反対側を、2 色に塗り分けられます（柱・面とも）。</p></li><li><div><span class="ver">v7.264.0</span><span class="date">2026-09-28</span></div><p><span class="tag fix">修正</span>透明の外皮と［先細り］を併用すると、中の色が透明の外へはみ出していたのを直しました。</p></li><li><div><span class="ver">v7.263.0</span><span class="date">2026-09-28</span></div><p><span class="tag fix">修正</span>［輪郭スムーズ］を入れても［輪郭を画像に沿わせる］が効くようにしました。透明の外皮と［ふくらみ］で、中の色が外皮を突き抜けていたのも直しました。</p></li><li><div><span class="ver">v7.262.0</span><span class="date">2026-09-27</span></div><p><span class="tag new">追加</span>［ふくらみ形状］に「カット」を追加しました。宝石のような切子面が作れます。</p></li><li><div><span class="ver">v7.261.0</span><span class="date">2026-09-27</span></div><p><span class="tag new">追加</span>分けた島を選ぶと、いまどの島を調整しているかと、設定が島ごとに効くことを表示します。</p></li><li><div><span class="ver">v7.260.0</span><span class="date">2026-09-26</span></div><p><span class="tag new">追加</span>割れ線を追加しました。描いた所には形を作らず、割る・彫る・消すの 3 つのペンで描けます。</p></li><li><div><span class="ver">v7.259.0</span><span class="date">2026-09-24</span></div><p><span class="tag fix">修正</span>ヘルプの図が、カーソルを乗せている間は自動でコマ送りされるようにしました。</p></li></ul>
 <p class="meta"><a href="https://github.com/junnosuke0923/fabric3d-samples/releases">これまでの版をすべて見る（GitHub）</a></p></section>
