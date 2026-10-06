@@ -96,7 +96,7 @@ button{font:inherit;padding:.15rem .7rem;border-radius:.35rem;cursor:pointer;
  border:1px solid rgba(128,128,128,.5);background:transparent;color:inherit}
 </style></head><body>
 <h1>Fabric 3D Texture Generator — Help</h1>
-<p class='sub'>build 7.267.0 · © 2025-2026 Junnosuke Kato</p>
+<p class='sub'>build 7.271.0 · © 2025-2026 Junnosuke Kato</p>
 <script>function figerr(el){el.style.display='none';var d=document.getElementById('figwarn');if(d)d.hidden=false;}</script>
 <p id='figwarn' hidden style='border:1px solid #c44;border-radius:.4rem;padding:.6rem .8rem;max-width:52rem'>The pictures could not be loaded. Keep this HTML together with its "help_figs" folder</p>
 <nav><a href='#s0'>About this tool</a><a href='#s1'>Pillar mode and Surface mode</a><a href='#s2'>Reading the panels</a><a href='#s3'>How to use it</a><a href='#s4'>Column Mode settings</a><a href='#s5'>Surface Mode settings</a><a href='#sx'>Settings used by both modes</a><a href='#s6'>Printing limits</a><a href='#s7'>Troubleshooting</a><a href='#s8'>Full Settings Reference</a></nav>
@@ -1276,7 +1276,7 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>Randomness<br><span class='i'>surface_flex_split_random_strength</span></td><td>How much the random and voronoi layouts are broken up. 0 is regular, 1 is the most irregular. Raising it widens the difference in cell size, and small cells are swallowed by the gaps and disappear, which widens the gap there (measured: up to 6.0mm at 1.0, and 1.5mm - the same as the grid - at 0.5 or below)</td><td>range 0 – 1 ／ default 0.50</td></tr>
 <tr><td class='k'>Min Tile Size (mm)<br><span class='i'>surface_flex_split_min_tile_size_mm</span></td><td>Removes tiles smaller than this. Useful for clearing the slivers along the edge (0 removes nothing).</td><td>range 0 – 10 ／ default 1</td></tr>
 <tr><td class='k'>Use Image Colors (Texture)<br><span class='i'>surface_use_texture</span></td><td>Applies the image so the surface shows the original colors.</td><td></td></tr>
-<tr><td class='k'>Side Color<br><span class='i'>surface_side_color_mode</span></td><td>Where the color of the raised sides comes from.</td><td>Fit to Texture / Solid Color / Average Color (image) / Split by Direction</td></tr>
+<tr><td class='k'>Side Color<br><span class='i'>surface_side_color_mode</span></td><td>Where the color of the raised sides comes from.</td><td>Fit to Texture / Solid Color / Average Color (image) / Split by Direction / Split Rims and Faces</td></tr>
 <tr><td class='k'>Side Color<br><span class='i'>surface_side_solid_color</span></td><td>Color used for the sides. Only used when Side Color is set to Solid.</td><td></td></tr>
 <tr><td class='k'>Alpha Threshold<br><span class='i'>surface_alpha_threshold</span></td><td>Nothing is built where the image is more transparent than this. Near 0 even semi-transparent edges are kept; near 1 only fully opaque areas remain.</td><td>range 0 – 1 ／ default 0.50</td></tr>
 <tr><td class='k'>Snap Outline to Image<br><span class='i'>surface_contour_snap</span></td><td>Pulls the outline vertices onto the shape in the image, removing the grid-shaped staircase. No vertices are added. It turns itself off when Contour Offset, the assembly margin, Contour Ribs or Split Lines are in use, and with some split patterns (such as Random). It does not act where Contour Smoothing has changed the shape.</td><td></td></tr>
@@ -1405,8 +1405,8 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 </table>
 <h4>Other（6）</h4>
 <table><tr><th>Setting</th><th>Description</th><th>Values</th></tr>
-<tr><td class='k'>Color A<br><span class='i'>side_dir_color_a</span></td><td>Color of the sides facing [Direction (deg)] (used only when Side Color is "Split by Direction")</td><td></td></tr>
-<tr><td class='k'>Color B<br><span class='i'>side_dir_color_b</span></td><td>Color of the sides facing away from [Direction (deg)] (used only when Side Color is "Split by Direction")</td><td></td></tr>
+<tr><td class='k'>Color A<br><span class='i'>side_dir_color_a</span></td><td>Color of the sides facing [Direction (deg)] (used only when Side Color is "Split by Direction"). With "Split Rims and Faces" it is the color of the broad faces of the walls</td><td></td></tr>
+<tr><td class='k'>Color B<br><span class='i'>side_dir_color_b</span></td><td>Color of the sides facing away from [Direction (deg)] (used only when Side Color is "Split by Direction"). With "Split Rims and Faces" it is the color of the tops, rims and ends</td><td></td></tr>
 <tr><td class='k'>Direction (deg)<br><span class='i'>side_dir_angle</span></td><td>Which way the Color A sides face. 0° is right (right of the image), 90° is back (top of the image), 180° is left. Seen from that side the piece looks Color A; from the opposite side, Color B</td><td>range -180 – 180 ／ default 0</td></tr>
 <tr><td class='k'>Fill<br><span class='i'>side_dir_fill</span></td><td>How the sides are painted when splitting by direction</td><td>Two Colors / Gradient / Image</td></tr>
 <tr><td class='k'>Image A<br><span class='i'>side_dir_image_a</span></td><td>Image for the sides facing [Direction (deg)]. Takes the pixel at the same place as the top image (used only when Fill is "Image"; Color A if empty)</td><td></td></tr>
