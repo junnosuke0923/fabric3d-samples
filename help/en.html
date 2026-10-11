@@ -96,7 +96,7 @@ button{font:inherit;padding:.15rem .7rem;border-radius:.35rem;cursor:pointer;
  border:1px solid rgba(128,128,128,.5);background:transparent;color:inherit}
 </style></head><body>
 <h1>Fabric 3D Texture Generator — Help</h1>
-<p class='sub'>build 7.271.0 · © 2025-2026 Junnosuke Kato</p>
+<p class='sub'>build 7.273.0 · © 2025-2026 Junnosuke Kato</p>
 <script>function figerr(el){el.style.display='none';var d=document.getElementById('figwarn');if(d)d.hidden=false;}</script>
 <p id='figwarn' hidden style='border:1px solid #c44;border-radius:.4rem;padding:.6rem .8rem;max-width:52rem'>The pictures could not be loaded. Keep this HTML together with its "help_figs" folder</p>
 <nav><a href='#s0'>About this tool</a><a href='#s1'>Pillar mode and Surface mode</a><a href='#s2'>Reading the panels</a><a href='#s3'>How to use it</a><a href='#s4'>Column Mode settings</a><a href='#s5'>Surface Mode settings</a><a href='#sx'>Settings used by both modes</a><a href='#s6'>Printing limits</a><a href='#s7'>Troubleshooting</a><a href='#s8'>Full Settings Reference</a></nav>
@@ -1224,7 +1224,7 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>Weaken Relief by Region Mask<br><span class='i'>region_mask_affects_surface</span></td><td>In Surface mode, the darker the mask, the lower the relief becomes. It only lowers, so the outline and the flex split are unchanged. How much it weakens is set by the height ratio below</td><td></td></tr>
 </table>
 <h3 class='grp'>Surface mode</h3>
-<h4>Surface mode（63）</h4>
+<h4>Surface mode（69）</h4>
 <table><tr><th>Setting</th><th>Description</th><th>Values</th></tr>
 <tr><td class='k'>Height Source<br><span class='i'>surface_height_mode</span></td><td>What decides the surface height. Flat is a constant thickness, Relief uses the image brightness, Height Map uses a separate image.</td><td>Flat (constant thickness) / Relief (from brightness) / Height Map (separate image)</td></tr>
 <tr><td class='k'>Max Height (mm)<br><span class='i'>surface_max_height_mm</span></td><td>How high the surface is raised. The bottom stays at Z=0. With Height Map the map is added on top of this height. The default ceiling of 0.4-15.0mm is a guideline from the Stratasys Japan hand-out; turn on Raise the Height Limit to go up to 50.0mm.</td><td>range 0 – 15 ／ default 2</td></tr>
@@ -1241,6 +1241,12 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>Top Puff (Dome)<br><span class='i'>surface_dome_puff</span></td><td>Puffs the whole top face into a dome, giving it the thickness of poured resin.</td><td></td></tr>
 <tr><td class='k'>Puff Amount (mm)<br><span class='i'>surface_dome_puff_amount_mm</span></td><td>Height of the puff. Larger values look plumper.</td><td>range 0 – 10 ／ default 0.60</td></tr>
 <tr><td class='k'>Puff Profile<br><span class='i'>surface_dome_puff_profile</span></td><td>Shape of the puff. Dome is an upturned-bowl curve, Plateau stays flat with a held-down rim, Center Bump raises only the middle, Cut gives flat gem-like facets.</td><td>Dome / Plateau / Center Bump / Cut</td></tr>
+<tr><td class='k'>Top Texture<br><span class='i'>surface_top_texture</span></td><td>Carves a relief pattern into the top using height only. The outline and sides do not move, and nothing rises above the original surface. The pattern is part of the exported shape</td><td>None / Hammered / Leather Grain / Flow Lines</td></tr>
+<tr><td class='k'>Texture Size (mm)<br><span class='i'>surface_top_texture_size_mm</span></td><td>The size of one unit of the pattern (a dent, a patch, or the groove spacing). Below 4 cells of the final generation, the pattern breaks up</td><td>range 0.20 – 20 ／ default 2</td></tr>
+<tr><td class='k'>Texture Depth (mm)<br><span class='i'>surface_top_texture_depth_mm</span></td><td>How many mm the deepest spots are carved below the original top. Carving stops where the thickness from the bottom would drop below 0.6mm</td><td>range 0 – 1 ／ default 0.20</td></tr>
+<tr><td class='k'>Texture Direction (deg)<br><span class='i'>surface_top_texture_angle</span></td><td>Rotates the pattern. For Flow Lines this is the direction the grooves run; at 0° they run left-right (along X). It does not follow the image rotation</td><td>range -180 – 180 ／ default 0</td></tr>
+<tr><td class='k'>Rim Margin (mm)<br><span class='i'>surface_top_texture_edge_mm</span></td><td>Within this distance from the edge of the top, carving is eased off so the rim stays smooth. The height right at the edge never moves, even at 0</td><td>range 0 – 10 ／ default 1</td></tr>
+<tr><td class='k'>Only Inside Region Mask<br><span class='i'>surface_top_texture_use_region</span></td><td>Carves the pattern only where the region mask is white (black areas keep the original surface). Uses the same mask as the columns and the relief</td><td></td></tr>
 <tr><td class='k'>Show Preview<br><span class='i'>surface_show_preview</span></td><td>Shows the preview output.</td><td></td></tr>
 <tr><td class='k'>Show Final<br><span class='i'>surface_show_final</span></td><td>Shows the final output.</td><td></td></tr>
 <tr><td class='k'>Delay (s)<br><span class='i'>surface_rt_live_delay</span></td><td>How long to wait after a slider stops before rebuilding. Shorter feels more responsive but is heavier while dragging.</td><td>range 0.05 – 2 ／ default 0.35</td></tr>

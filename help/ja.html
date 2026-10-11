@@ -96,7 +96,7 @@ button{font:inherit;padding:.15rem .7rem;border-radius:.35rem;cursor:pointer;
  border:1px solid rgba(128,128,128,.5);background:transparent;color:inherit}
 </style></head><body>
 <h1>Fabric 3D Texture Generator ヘルプ</h1>
-<p class='sub'>build 7.271.0 · © 2025-2026 Junnosuke Kato</p>
+<p class='sub'>build 7.273.0 · © 2025-2026 Junnosuke Kato</p>
 <script>function figerr(el){el.style.display='none';var d=document.getElementById('figwarn');if(d)d.hidden=false;}</script>
 <p id='figwarn' hidden style='border:1px solid #c44;border-radius:.4rem;padding:.6rem .8rem;max-width:52rem'>図が読み込めません。この HTML は、隣の「help_figs」フォルダと一緒に置いてください</p>
 <nav><a href='#s0'>このツールについて</a><a href='#s1'>柱モードと面モード</a><a href='#s2'>画面の見方</a><a href='#s3'>進め方</a><a href='#s4'>柱モードの設定</a><a href='#s5'>面モードの設定</a><a href='#sx'>両方に使う設定</a><a href='#s6'>造形の制約</a><a href='#s7'>困ったときは</a><a href='#s8'>全項目リファレンス</a></nav>
@@ -1224,7 +1224,7 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>領域マスクで高さを弱める<br><span class='i'>region_mask_affects_surface</span></td><td>面モードで、このマスクの黒い部分ほどレリーフを低くします。下げるだけなので、輪郭も面の分割も変わりません。弱める量は下の高さ比で決めます</td><td></td></tr>
 </table>
 <h3 class='grp'>面モード</h3>
-<h4>面モード（63）</h4>
+<h4>面モード（69）</h4>
 <table><tr><th>項目</th><th>説明</th><th>値</th></tr>
 <tr><td class='k'>高さの決め方<br><span class='i'>surface_height_mode</span></td><td>面の高さを何から決めるかです。フラット＝一定、レリーフ＝画像の明るさ、高さマップ＝別に用意した画像から決めます</td><td>フラット（一定の厚み） / レリーフ（明るさから） / 高さマップ（別画像から）</td></tr>
 <tr><td class='k'>最大高さ(mm)<br><span class='i'>surface_max_height_mm</span></td><td>面を立ち上げる高さです。底面はZ=0に固定されます。「高さマップ」のときは、この高さを下地にして高さマップのぶんが上に足されます。既定の上限0.4〜15.0mmはストラタシスジャパン提供の資料の目安で、「高さの上限をひろげる」を入れると50.0mmまで指定できます</td><td>範囲 0 〜 15 ／ 既定 2</td></tr>
@@ -1241,6 +1241,12 @@ function chk(m,msg){for(let i=0;i<m;i++){if(frames(i))continue;
 <tr><td class='k'>上面ふくらみ（ドーム）<br><span class='i'>surface_dome_puff</span></td><td>上面全体をドーム状にふくらませます。樹脂を盛ったような厚みが出ます</td><td></td></tr>
 <tr><td class='k'>ふくらみ量(mm)<br><span class='i'>surface_dome_puff_amount_mm</span></td><td>ふくらみの高さです。大きいほどぷっくりします</td><td>範囲 0 〜 10 ／ 既定 0.60</td></tr>
 <tr><td class='k'>ふくらみ形状<br><span class='i'>surface_dome_puff_profile</span></td><td>ふくらみ方の違いです。山なり＝お椀を伏せたような曲面、台地状＝縁を抑えて平たく、中央が上がる＝中心だけ強く出ます、カット＝宝石のような平らな切子面</td><td>山なり / 台地状 / 中央が上がる / カット</td></tr>
+<tr><td class='k'>上面の模様<br><span class='i'>surface_top_texture</span></td><td>上面に、高さだけで凹凸の模様を彫ります。輪郭と側面は動かず、元の面より高くはなりません。模様は書き出しの形にも入ります</td><td>なし / 槌目 / シボ / 流線</td></tr>
+<tr><td class='k'>模様の大きさ(mm)<br><span class='i'>surface_top_texture_size_mm</span></td><td>模様の 1 つぶん（くぼみ・区画・溝の間隔）の大きさです。最終生成の 1 マスの 4 倍より小さいと、模様が崩れます</td><td>範囲 0.20 〜 20 ／ 既定 2</td></tr>
+<tr><td class='k'>模様の深さ(mm)<br><span class='i'>surface_top_texture_depth_mm</span></td><td>いちばん深い所で、元の上面から何 mm 彫るかです。底からの厚みが 0.6mm を切る所では、そこで止まります</td><td>範囲 0 〜 1 ／ 既定 0.20</td></tr>
+<tr><td class='k'>模様の向き(度)<br><span class='i'>surface_top_texture_angle</span></td><td>模様を回す角度です。流線では溝の流れる向きになります。0° で左右（X の向き）へ流れます。画像の回転には付いて回りません</td><td>範囲 -180 〜 180 ／ 既定 0</td></tr>
+<tr><td class='k'>縁を残す幅(mm)<br><span class='i'>surface_top_texture_edge_mm</span></td><td>上面の縁からこの幅は、彫りを弱めて滑らかに残します。縁ちょうどの高さは、幅が 0 でも動きません</td><td>範囲 0 〜 10 ／ 既定 1</td></tr>
+<tr><td class='k'>領域マスクの範囲だけ<br><span class='i'>surface_top_texture_use_region</span></td><td>領域マスクの白い所だけに模様を彫ります（黒い所は元の面のまま）。マスクは柱・レリーフと同じ 1 枚を使います</td><td></td></tr>
 <tr><td class='k'>プレビュー表示<br><span class='i'>surface_show_preview</span></td><td>プレビューの生成物を表示します</td><td></td></tr>
 <tr><td class='k'>最終表示<br><span class='i'>surface_show_final</span></td><td>最終生成の生成物を表示します</td><td></td></tr>
 <tr><td class='k'>遅延(s)<br><span class='i'>surface_rt_live_delay</span></td><td>スライダーを動かしてから作り直すまでの待ち時間です。短いほど反応が速いかわりに、動かしている間が重くなります</td><td>範囲 0.05 〜 2 ／ 既定 0.35</td></tr>
